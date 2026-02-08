@@ -61,16 +61,32 @@
                 <div class="photo-frame"><img src="eating" alt="Emma 1"></div>
                 <p style="color:var(--text); margin-top: 20px;">always eating together cuz we're fat bitches</p>
             </div>
-        <div class="swiper-container" id="swiper">
+            
+        <div class="swiper-container" id="swiper1">
             <div class="page">
                 <div class="photo-frame"><img src="sahel" alt="Emma 4"></div>
                 <p style="color:var(--text); margin-top: 20px;">sahel ma3 ba3d always and doing some crazy shit together</p>
             </div>   
             <div class="page">
                 <div class="photo-frame" style="transform: rotate(2deg);">
-                    <video id="bdayVideo" autoplay muted loop playsinline>
-                        <source src="tiktok" type="video/mp4">
-                    </video>
+                    <video id="bdayVideo" playsinline loop>
+    <source src="tiktok.mp4" type="video/mp4">
+</video>
+
+<div id="unmuteOverlay"
+     style="
+     position:absolute;
+     inset:0;
+     background:rgba(0,0,0,0.4);
+     display:none;
+     align-items:center;
+     justify-content:center;
+     color:white;
+     font-size:18px;
+     font-weight:bold;
+     cursor:pointer;">
+    🔊 Tap to unmute
+</div>
                 </div>
                 <p style="color:var(--text); margin-top: 20px;">to many more tiktoks in gym </p>
             </div>
@@ -92,6 +108,7 @@
     <script>
         let currentPage = 0;
         const totalPages = 5;
+        const VIDEO_PAGE_INDEX = 2;
 
         function initMic() {
             document.getElementById('micBtn').style.display = 'none';
@@ -123,14 +140,14 @@
                 document.getElementById('blow-screen').style.display = 'none';
                 document.getElementById('gallery-screen').style.display = 'block';
                 // Trigger video play for mobile
-                const vid = document.getElementById('bdayVideo');
-                if(vid) vid.play();
                 initSwiper();
             }, 1000);
         }
 
         function initSwiper() {
             const swiper = document.getElementById('swiper');
+            const video = document.getElementById('bdayVideo');
+            const overlay = document.getElementById('unmuteOverlay');
             let startX = 0;
 
             window.addEventListener('touchstart', e => startX = e.touches[0].clientX);
@@ -142,18 +159,54 @@
                 } else if (endX - startX > 50 && currentPage > 0) {
                     currentPage--;
                 }
-                swiper.style.transform = `translateX(-${currentPage * 100}vw)`;
+               swiper.style.transform = `translateX(-${currentPage * 100}vw)`;
+
+if (video) {
+    if (currentPage === VIDEO_PAGE_INDEX) {
+        video.muted = true;
+        video.currentTime = 0;
+        video.play();
+        overlay.style.display = "flex";
+    } else {
+        video.pause();
+    }
+}
             });
-            window.addEventListener('mousedown', () => {
-                 if (currentPage < totalPages - 1) {
-                    currentPage++;
-                    swiper.style.transform = `translateX(-${currentPage * 100}vw)`;
-                    if(currentPage === totalPages - 1) document.getElementById('hint').style.display = 'none';
-                 }
-            });
+           window.addEventListener('mousedown', () => {
+    if (currentPage < totalPages - 1) {
+        currentPage++;
+        swiper.style.transform = `translateX(-${currentPage * 100}vw)`;
+
+        if (video) {
+            if (currentPage === VIDEO_PAGE_INDEX) {
+                video.muted = true;
+                video.currentTime = 0;
+                video.play();
+                overlay.style.display = "flex";
+            } else {
+                video.pause();
+            }
         }
+
+        if (currentPage === totalPages - 1) {
+            document.getElementById('hint').style.display = 'none';
+        }
+    }
+});
+        }
+        document.addEventListener("click", function () {
+    const video = document.getElementById('bdayVideo');
+    const overlay = document.getElementById('unmuteOverlay');
+
+    if (video && overlay && overlay.style.display === "flex") {
+        video.muted = false;
+        overlay.style.display = "none";
+        video.play();
+    }
+});
     </script>
 </body>
 </html>
+
 
 
